@@ -89,7 +89,7 @@ export default function DrStethosPlans() {
         </div>
 
         {/* Plan Cards */}
-        <div style={styles.cardsGrid}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch" style={styles.cardsGrid}>
           {PLANS.map((plan) => (
             <div
               key={plan.name}
@@ -162,7 +162,7 @@ export default function DrStethosPlans() {
         {/* Additional Benefits */}
         <div style={styles.benefitsContainer}>
           <h3 style={styles.benefitsTitle}>Additional Benefits</h3>
-          <div style={styles.benefitsGrid}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6" style={styles.benefitsGrid}>
             {BENEFITS.map((b) => (
               <div key={b.text} style={styles.benefitCard}>
                 <div style={styles.benefitEmoji}>{b.emoji}</div>
@@ -221,10 +221,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   /* ---- Cards Grid ---- */
   cardsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '24px',
-    alignItems: 'stretch',
+    // Relying on Tailwind className `grid grid-cols-1 md:grid-cols-3 gap-6` in JSX now
   },
 
   /* ---- Card ---- */
@@ -388,30 +385,26 @@ const styles: Record<string, React.CSSProperties> = {
   /* ---- Benefits ---- */
   benefitsContainer: {
     marginTop: '80px',
-    background: '#fff',
-    borderRadius: '24px',
-    border: '1px solid #E8E8E8',
-    padding: '48px 40px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
   },
   benefitsTitle: {
-    textAlign: 'center',
-    fontSize: '1.5rem',
-    fontWeight: 700,
+    fontSize: '2rem',
+    fontWeight: 800,
     color: '#111',
-    marginBottom: '40px',
+    letterSpacing: '-0.02em',
+    marginBottom: '32px',
+    textAlign: 'center',
   },
   benefitsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '24px',
+    // relying on className `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6` in JSX now
   },
   benefitCard: {
+    background: '#fff',
+    borderRadius: '20px',
+    padding: '32px 24px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center',
-    padding: '16px',
   },
   benefitEmoji: {
     fontSize: '2.5rem',

@@ -17,6 +17,7 @@ import {
   MapPin,
   ChevronRight,
   Menu,
+  X,
 } from 'lucide-react';
 
 const BrandLogo = ({ size = 32, style }) => (
@@ -31,12 +32,21 @@ const BrandLogo = ({ size = 32, style }) => (
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const navLinks = [
+    { label: 'For Doctors', href: '#professionals' },
+    { label: 'For Employers', href: '#hospitals' },
+    { label: 'About Us', href: '#about' },
+    { label: 'Pricing', href: '#pricing' },
+    { label: 'Contact', href: '#contact' },
+  ];
 
   return (
     <nav style={{
@@ -57,23 +67,17 @@ const Navbar = () => {
         </a>
 
         {/* Pill Nav Links */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '4px',
+        <div className="hidden md:flex" style={{
+          alignItems: 'center', gap: '4px',
           background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           borderRadius: '100px', padding: '6px 8px',
           border: '1px solid rgba(0,0,0,0.06)',
           boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
         }}>
-          {[
-            { label: 'For Doctors', href: '#professionals' },
-            { label: 'For Employers', href: '#hospitals' },
-            { label: 'About Us', href: '#about' },
-            { label: 'Pricing', href: '#pricing' },
-            { label: 'Contact', href: '#contact' },
-          ].map(link => (
+          {navLinks.map(link => (
             <a key={link.label} href={link.href} style={{
-              padding: '8px 18px', borderRadius: '100px', fontWeight: 500,
+              display: 'block', padding: '8px 18px', borderRadius: '100px', fontWeight: 500,
               fontSize: '0.9rem', color: '#166534', textDecoration: 'none',
               transition: 'all 0.2s ease',
             }}>
@@ -83,7 +87,7 @@ const Navbar = () => {
         </div>
 
         {/* Sign In */}
-        <a href="#get-started" style={{
+        <a href="#get-started" className="hidden md:block" style={{
           padding: '10px 28px', borderRadius: '100px', fontWeight: 600, fontSize: '0.9rem',
           color: '#111', textDecoration: 'none', border: '1px solid #e5e7eb',
           background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)',
@@ -91,6 +95,37 @@ const Navbar = () => {
         }}>
           Sign In
         </a>
+        
+        {/* Mobile Toggle */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="block md:hidden"
+          style={{ background: 'transparent', border: 'none', zIndex: 1001, cursor: 'pointer', padding: '8px' }}
+        >
+          {isOpen ? <X color="#111" size={28} /> : <Menu color="#111" size={28} />}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        {isOpen && (
+          <div className="md:hidden flex flex-col items-center justify-center" style={{
+            position: 'fixed', inset: 0, background: 'rgba(240,248,243,0.98)',
+            gap: '24px', zIndex: 1000, WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)'
+          }}>
+            {navLinks.map(link => (
+              <a key={link.label} href={link.href} onClick={() => setIsOpen(false)} style={{
+                fontSize: '1.5rem', fontWeight: 700, color: '#166534', textDecoration: 'none'
+              }}>
+                {link.label}
+              </a>
+            ))}
+            <a href="#get-started" onClick={() => setIsOpen(false)} style={{
+              marginTop: '40px', padding: '14px 40px', borderRadius: '100px', background: '#166534',
+              color: 'white', fontWeight: 600, textDecoration: 'none'
+            }}>
+              Sign In
+            </a>
+          </div>
+        )}
       </div>
     </nav>
   );
@@ -102,65 +137,70 @@ const Hero = () => {
       position: 'relative', minHeight: '100vh', overflow: 'hidden',
       fontFamily: "'Outfit', sans-serif",
     }}>
-      {/* Full-bleed doctor background image */}
-      <div style={{
+      {/* Background Image - Handles both desktop (right side) and mobile (top) */}
+      <div className="hidden lg:block" style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url(/hero-doctor.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center right',
         backgroundRepeat: 'no-repeat',
       }} />
+      <div className="lg:hidden" style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '50vh', zIndex: 0,
+        backgroundImage: 'url(/hero-doctor.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
+        backgroundRepeat: 'no-repeat',
+      }} />
 
-      {/* Left-side gradient overlay — fades from green/white into transparent */}
-      <div style={{
+      {/* Gradients to blend image into background */}
+      <div className="hidden lg:block" style={{
         position: 'absolute', inset: 0, zIndex: 1,
         background: 'linear-gradient(to right, rgba(240,253,244,0.97) 0%, rgba(240,253,244,0.92) 30%, rgba(240,253,244,0.7) 50%, rgba(255,255,255,0.2) 70%, transparent 100%)',
       }} />
-
-      {/* Decorative blobs */}
-      <div style={{
-        position: 'absolute', top: '-80px', left: '-80px', width: '400px', height: '400px',
-        background: 'radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%)',
-        borderRadius: '50%', zIndex: 1,
-      }} />
-      <div style={{
-        position: 'absolute', bottom: '-60px', left: '20%', width: '300px', height: '300px',
-        background: 'radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 70%)',
-        borderRadius: '50%', zIndex: 1,
+      <div className="lg:hidden" style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: 'linear-gradient(to bottom, rgba(240,253,244,0.1) 0%, rgba(240,253,244,0.8) 40%, rgba(240,253,244,1) 50%, rgba(240,253,244,1) 100%)',
       }} />
 
-      {/* Content */}
-      <div style={{
+      {/* Content Container */}
+      <div className="flex flex-col lg:block" style={{
         position: 'relative', zIndex: 2,
-        maxWidth: '1280px', margin: '0 auto', padding: '0 32px',
-        display: 'flex', alignItems: 'center',
-        minHeight: '100vh', paddingTop: '72px',
+        maxWidth: '1280px', margin: '0 auto', padding: '0 24px',
+        minHeight: '100vh',
       }}>
-        <div style={{ maxWidth: '600px' }} className="animate-fade-up">
-          {/* Heading */}
+        {/* Text + CTA area */}
+        <div className="animate-fade-up flex flex-col items-center lg:items-start text-center lg:text-left" style={{ maxWidth: '800px', width: '100%', paddingTop: '35vh' }}>
+          
           <h1 style={{
-            fontSize: 'clamp(2.5rem, 5vw, 3.8rem)',
-            fontWeight: 800, color: '#111',
-            letterSpacing: '-0.03em', lineHeight: 1.08,
-            marginBottom: '24px',
+            fontSize: 'clamp(2.25rem, 5vw, 4.5rem)',
+            color: '#111',
+            fontWeight: 800,
+            fontFamily: "'DM Serif Display', serif",
+            lineHeight: 1.1,
+            margin: '0 0 16px 0',
+            letterSpacing: '-0.02em',
           }}>
-            Hire <span style={{ color: '#16A34A' }}>Verified Doctors</span>{' '}
-            in Minutes, Not Weeks.
+            Hire <br className="lg:hidden" />
+            <span style={{ color: '#16A34A' }}>Verified Doctors</span>
+            <br className="hidden lg:block" />
+            <span className="lg:hidden"> </span>
+            in Minutes,<br className="lg:hidden" /> Not Weeks.
           </h1>
 
           {/* Subtitle */}
           <p style={{
-            fontSize: '1.15rem', color: '#4b5563', lineHeight: 1.7,
-            maxWidth: '480px', marginBottom: '40px', fontWeight: 400,
+            fontSize: '1rem', color: '#4b5563', lineHeight: 1.6,
+            maxWidth: '480px', marginBottom: '24px', fontWeight: 400,
           }}>
             Connecting elite healthcare professionals with prestigious opportunities nationwide.
           </p>
 
           {/* CTA Buttons */}
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '0' }}>
-            <a href="#get-started" style={{
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <a href="#get-started" className="w-full sm:w-auto justify-center" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '16px 36px', borderRadius: '100px', fontWeight: 700,
+              padding: '14px 32px', borderRadius: '100px', fontWeight: 700,
               fontSize: '1rem', background: '#16A34A', color: '#fff',
               textDecoration: 'none', border: 'none',
               boxShadow: '0 8px 24px rgba(22,163,74,0.35)',
@@ -168,15 +208,15 @@ const Hero = () => {
             }}>
               Get Started <ChevronRight size={18} />
             </a>
-            <a href="#how-it-works" style={{
+            <a href="#how-it-works" className="w-full sm:w-auto justify-center" style={{
               display: 'inline-flex', alignItems: 'center', gap: '10px',
-              padding: '16px 28px', borderRadius: '100px', fontWeight: 600,
+              padding: '14px 24px', borderRadius: '100px', fontWeight: 600,
               fontSize: '1rem', color: '#374151', textDecoration: 'none',
               background: 'transparent', border: 'none', cursor: 'pointer',
               transition: 'all 0.3s ease',
             }}>
               <div style={{
-                width: '40px', height: '40px', borderRadius: '50%',
+                width: '36px', height: '36px', borderRadius: '50%',
                 border: '2px solid #d1d5db', display: 'flex',
                 alignItems: 'center', justifyContent: 'center',
               }}>
@@ -186,35 +226,59 @@ const Hero = () => {
             </a>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Stats Bar — Frosted Glass */}
-      <div style={{
-        position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
-        zIndex: 3, width: '100%', maxWidth: '700px', padding: '0 32px',
-      }}>
-        <div className="animate-fade-up delay-300" style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          background: 'rgba(255,255,255,0.55)',
-          backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-          borderRadius: '20px', padding: '20px 40px',
-          border: '1px solid rgba(255,255,255,0.7)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-          gap: '16px',
+        {/* Stats Bar — flows below CTA on mobile, absolute on desktop */}
+        <div className="w-full px-0 lg:px-4 mt-8 lg:mt-0" style={{
+          zIndex: 3, maxWidth: '800px',
         }}>
-          {[
-            { value: '1,000+', label: 'Partner Hospitals' },
-            { value: '98%', label: 'Placement Rate' },
-            { value: 'Premium', label: 'Salaries Secured' },
-          ].map((stat, i) => (
-            <React.Fragment key={stat.label}>
-              {i > 0 && <div style={{ width: '1px', height: '40px', background: 'rgba(0,0,0,0.08)' }} />}
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ fontWeight: 800, fontSize: '1.3rem', color: '#111', margin: 0, letterSpacing: '-0.02em' }}>{stat.value}</p>
-                <p style={{ fontWeight: 500, fontSize: '0.8rem', color: '#6b7280', margin: 0 }}>{stat.label}</p>
-              </div>
-            </React.Fragment>
-          ))}
+          {/* Desktop: absolute position */}
+          <div className="hidden lg:block" style={{
+            position: 'absolute', bottom: '40px', left: '24px', right: '24px',
+            maxWidth: '800px',
+          }}>
+            <div className="animate-fade-up delay-300 grid grid-cols-3 gap-4" style={{
+              background: 'rgba(255,255,255,0.55)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+              borderRadius: '24px', padding: '24px',
+              border: '1px solid rgba(255,255,255,0.7)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
+            }}>
+              {[
+                { value: '1,000+', label: 'Partner Hospitals' },
+                { value: '98%', label: 'Placement Rate' },
+                { value: 'Premium', label: 'Salaries Secured' },
+              ].map((stat, i) => (
+                <div key={stat.label} className="text-center relative">
+                  {i > 0 && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-10 bg-black/10" />}
+                  <p style={{ fontWeight: 800, fontSize: '1.4rem', color: '#111', margin: 0, letterSpacing: '-0.02em' }}>{stat.value}</p>
+                  <p style={{ fontWeight: 500, fontSize: '0.85rem', color: '#6b7280', margin: 0 }}>{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile: flows inline */}
+          <div className="lg:hidden">
+            <div className="animate-fade-up delay-300 grid grid-cols-3 gap-2" style={{
+              background: 'rgba(255,255,255,0.55)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+              borderRadius: '20px', padding: '16px',
+              border: '1px solid rgba(255,255,255,0.7)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
+            }}>
+              {[
+                { value: '1,000+', label: 'Partner Hospitals' },
+                { value: '98%', label: 'Placement Rate' },
+                { value: 'Premium', label: 'Salaries Secured' },
+              ].map((stat, i) => (
+                <div key={stat.label} className="text-center relative">
+                  {i > 0 && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-8 bg-black/10" />}
+                  <p style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111', margin: 0, letterSpacing: '-0.02em' }}>{stat.value}</p>
+                  <p style={{ fontWeight: 500, fontSize: '0.7rem', color: '#6b7280', margin: 0 }}>{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -244,9 +308,9 @@ const HeroSteps = () => {
           <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#16A34A', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>How It Works</p>
           <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#111', letterSpacing: '-0.02em', margin: 0 }}>Get started in 3 simple steps</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px', position: 'relative' }}>
-          {/* Connector lines */}
-          <div style={{ position: 'absolute', top: '36px', left: 'calc(33.3% - 16px)', width: 'calc(33.3% + 32px)', height: '2px', background: 'linear-gradient(to right, #DCFCE7, #16A34A, #DCFCE7)', zIndex: 0 }} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          {/* Connector lines - only visible on desktop */}
+          <div className="hidden md:block" style={{ position: 'absolute', top: '36px', left: 'calc(33.3% - 16px)', width: 'calc(33.3% + 32px)', height: '2px', background: 'linear-gradient(to right, transparent, #10b981, transparent)', opacity: 0.3, zIndex: 0 }} />
 
           {steps.map((step) => (
             <div key={step.num} style={{
@@ -320,10 +384,11 @@ const About = () => {
             About DrStethos
           </div>
           <h2 style={{
-            fontSize: 'clamp(2rem, 4vw, 2.5rem)',
+            fontSize: 'clamp(2rem, 6vw, 3.5rem)',
             color: '#ffffff',
             fontWeight: 800,
-            lineHeight: 1.3,
+            fontFamily: "'DM Serif Display', serif",
+            lineHeight: 1.1,
             margin: 0,
             letterSpacing: '-0.02em',
           }}>
@@ -378,14 +443,14 @@ const WhyChoose = () => {
   return (
     <section className="section" style={{ background: 'var(--primary-blue)', color: 'white', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(0, 180, 216, 0.4) 0%, rgba(255,255,255,0) 70%)', borderRadius: '50%' }}></div>
-      <div className="container relative z-10">
-        <div className="grid grid-2" style={{ gap: '64px' }}>
+      <div className="container relative z-10 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <div>
-            <h2 style={{ color: 'white', fontSize: '3rem' }}>Why Choose <br/>DrStethos?</h2>
-            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.25rem', marginBottom: '32px' }}>
-              At DrStethos, we believe that healthcare deserves a recruitment system that is efficient, trustworthy, and built for real-world needs. Whether you're a hospital looking for skilled professionals or a doctor seeking your next opportunity, we're here to make the process effortless.
+            <h2 style={{ color: 'white', fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontFamily: "'DM Serif Display', serif", lineHeight: 1.1, marginBottom: '24px' }}>Why Choose <br className="hidden md:block"/><span style={{ fontStyle: 'italic', color: '#10b981' }}>DrStethos?</span></h2>
+            <p style={{ color: '#94a3b8', fontSize: '1.15rem', marginBottom: '32px', lineHeight: 1.6 }}>
+              At DrStethos, we believe that healthcare deserves a recruitment system that is efficient, trustworthy, and built for real-world needs.
             </p>
-            <div className="flex gap-8" style={{ marginTop: '48px', borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '32px' }}>
+            <div className="flex flex-col sm:flex-row gap-8 sm:gap-12" style={{ marginTop: '48px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '32px' }}>
               <div>
                 <h3 style={{ color: 'var(--secondary-teal)', fontSize: '2.5rem' }}>5000+</h3>
                 <p style={{ color: 'white' }}>Registered Doctors</p>
@@ -429,8 +494,7 @@ const HowItWorks = () => {
   ];
 
   const StepCard = ({ step, animDelay }) => (
-    <div className="step-card-anim" style={{ 
-      width: 'calc(50% - 20px)',
+    <div className="step-card-anim flex-1" style={{ 
       position: 'relative', display: 'flex', alignItems: 'center', 
       background: 'linear-gradient(135deg, rgba(255,255,255,1), rgba(255,255,255,0.9))', 
       backdropFilter: 'blur(10px)', 
@@ -474,38 +538,28 @@ const HowItWorks = () => {
 
       <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-          <h2 style={{ color: '#064e3b', fontSize: '3rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+          <h2 style={{ color: '#064e3b', fontSize: 'clamp(2.5rem, 5vw, 3rem)', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
             DrStethos Connected Journey<br/>How It Works
           </h2>
         </div>
 
-        <div style={{ position: 'relative', padding: '0 40px' }}>
-          {/* THE GLOWING S-CURVE */}
+        {/* DESKTOP VIEW (S-Curve) */}
+        <div className="hidden md:block" style={{ position: 'relative', padding: '0 40px' }}>
           <div className="s-curve-line" style={{
             position: 'absolute',
             top: '65px', 
             bottom: '65px',
-            left: '40px', // Exact padding alignment
+            left: '40px', 
             right: '40px',
             zIndex: 1,
             filter: 'drop-shadow(0 0 10px #10b981)'
           }}>
-             {/* 1->2 Horizontal */}
              <div className="h-line" style={{ top: 0, left: 0, width: '50%' }} />
-             
-             {/* 2->4 Vertical right drop (U-turn) */}
              <div style={{ position: 'absolute', top: 0, left: '50%', width: '20px', height: '50%', borderTop: '4px solid #10b981', borderRight: '4px solid #10b981', borderBottom: '4px solid #10b981', borderTopRightRadius: '16px', borderBottomRightRadius: '16px' }} />
-             
-             {/* 4->3 Horizontal */}
              <div className="h-line" style={{ top: '50%', left: '20px', width: 'calc(50% - 20px)' }} />
-             
-             {/* 3->5 Vertical left drop (U-turn) */}
              <div style={{ position: 'absolute', top: '50%', left: 0, width: '20px', height: '50%', borderTop: '4px solid #10b981', borderLeft: '4px solid #10b981', borderBottom: '4px solid #10b981', borderTopLeftRadius: '16px', borderBottomLeftRadius: '16px' }} />
-             
-             {/* 5->6 Horizontal */}
              <div className="h-line" style={{ top: '100%', left: '20px', width: '50%' }} />
              
-             {/* Glowing Dots pulsing in the negative gaps between cards */}
              <div className="glow-dot" style={{ top: '-5px', left: 'calc(50% - 7px)', animationDelay: '0s' }} />             
              <div className="glow-dot" style={{ top: '25%', left: 'calc(50% + 20px - 7px)', animationDelay: '0.6s' }} />
              <div className="glow-dot" style={{ top: 'calc(50% - 5px)', left: 'calc(50% - 7px)', animationDelay: '1.2s' }} />
@@ -513,27 +567,38 @@ const HowItWorks = () => {
              <div className="glow-dot" style={{ top: 'calc(100% - 5px)', left: 'calc(50% - 7px)', animationDelay: '2.4s' }} />
           </div>
 
-          {/* CARDS */}
           <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', gap: '80px' }}>
-            {/* ROW 1: 1 -> 2 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '40px' }}>
               <StepCard step={steps[0]} animDelay="0s" />
               <StepCard step={steps[1]} animDelay="0.5s" />
             </div>
-
-            {/* ROW 2: 4 <- 3 (S-Curve chronological tracing: 2 drops into 3, crosses left to 4, drops into 5) */}
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '40px' }}>
-              <StepCard step={steps[3]} animDelay="1.8s" /> {/* Step 4 on Left */}
-              <StepCard step={steps[2]} animDelay="1.1s" /> {/* Step 3 on Right */}
+              <StepCard step={steps[3]} animDelay="1.8s" /> 
+              <StepCard step={steps[2]} animDelay="1.1s" /> 
             </div>
-
-            {/* ROW 3: 5 -> 6 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '40px' }}>
               <StepCard step={steps[4]} animDelay="2.5s" />
               <StepCard step={steps[5]} animDelay="3.1s" />
             </div>
           </div>
         </div>
+
+        {/* MOBILE VIEW (Vertical Stack) */}
+        <div className="md:hidden" style={{ position: 'relative', paddingLeft: '16px' }}>
+          <div style={{
+            position: 'absolute', top: '20px', bottom: '20px', left: '16px',
+            width: '4px', background: 'linear-gradient(to bottom, #10b981, rgba(16,185,129,0.3))',
+            borderRadius: '4px', zIndex: 1,
+            boxShadow: '0 0 10px #10b981'
+          }} />
+          
+          <div className="flex flex-col gap-8" style={{ position: 'relative', zIndex: 2 }}>
+             {steps.map((step, index) => (
+                <StepCard key={step.num} step={step} animDelay={`${index * 0.2}s`} />
+             ))}
+          </div>
+        </div>
+
       </div>
 
       <style>{`
@@ -796,20 +861,20 @@ const Footer = () => {
 
 export default function App() {
   return (
-    <div style={{
+    <div className="app-wrapper" style={{
       position: 'relative',
       minHeight: '100vh',
-      padding: '40px', // Large padding to frame the site beautifully
-      backgroundColor: 'transparent', // Changed to transparent so video can show through
+      backgroundColor: 'transparent',
       fontFamily: "'Outfit', sans-serif",
       overflowX: 'hidden'
     }}>
-      {/* 🚀 FULL PAGE VIDEO BACKGROUND */}
+      {/* 🚀 FULL PAGE VIDEO BACKGROUND — hidden on mobile */}
       <video
         autoPlay
         loop
         muted
         playsInline
+        className="hidden lg:block"
         style={{
           position: 'fixed',
           top: 0,
@@ -818,30 +883,29 @@ export default function App() {
           height: '100vh',
           objectFit: 'cover',
           zIndex: -1,
-          opacity: 0.8 // Slightly faded so the UI stays readable
+          opacity: 0.8
         }}
       >
-        {/* User needs to paste their video as "bg-video.mp4" in the public folder */}
         <source src="/bg-video.mp4" type="video/mp4" />
       </video>
 
-      {/* Decorative abstract background blobs mimicking the reference */}
-      <div style={{ position: 'fixed', top: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(74,222,128,0.5) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0 }} />
-      <div style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(34,197,94,0.2) 0%, transparent 60%)', borderRadius: '50%', zIndex: 0 }} />
-      <div style={{ position: 'fixed', top: '40%', right: '-5%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(22,163,74,0.15) 0%, transparent 60%)', borderRadius: '50%', zIndex: 0 }} />
+      {/* Decorative abstract background blobs — hidden on mobile */}
+      <div className="hidden lg:block" style={{ position: 'fixed', top: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(74,222,128,0.5) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0 }} />
+      <div className="hidden lg:block" style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(34,197,94,0.2) 0%, transparent 60%)', borderRadius: '50%', zIndex: 0 }} />
+      <div className="hidden lg:block" style={{ position: 'fixed', top: '40%', right: '-5%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(22,163,74,0.15) 0%, transparent 60%)', borderRadius: '50%', zIndex: 0 }} />
 
-      {/* The main 'Glassy Window' container */}
-      <div style={{
+      {/* The main 'Glassy Window' container — full-screen on mobile, framed on desktop */}
+      <div className="glassy-card-wrapper" style={{
         position: 'relative',
         zIndex: 1,
-        background: 'rgba(255, 255, 255, 0.45)', // very translucent white
+        background: 'rgba(255, 255, 255, 0.45)',
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',
         borderRadius: '32px',
-        border: '3px solid rgba(255, 255, 255, 0.8)', // Thicker translucent white border
+        border: '3px solid rgba(255, 255, 255, 0.8)',
         boxShadow: '0 25px 60px rgba(0, 0, 0, 0.1)',
-        minHeight: 'calc(100vh - 80px)', // 80px = padding top + bottom
-        overflow: 'clip', // clip instead of hidden to prevent breaking position:sticky
+        minHeight: '100vh',
+        overflow: 'clip',
         display: 'flex',
         flexDirection: 'column'
       }}>

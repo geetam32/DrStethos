@@ -146,6 +146,25 @@ ul {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
 
+/* Mobile: glassy card fills full screen */
+@media (max-width: 1023px) {
+  .glassy-card-wrapper {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  .app-wrapper {
+    padding: 0 !important;
+  }
+}
+
+/* Desktop: framed card with video visible in border area */
+@media (min-width: 1024px) {
+  .app-wrapper {
+    padding: 40px;
+  }
+}
+
 /* Flexbox Utilities */
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
